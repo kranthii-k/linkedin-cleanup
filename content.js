@@ -1,5 +1,5 @@
 /**
- * LinkedIn Ad Blocker - Content Script (Precise Version)
+ * LinkedIn Ad Blocker - Content Script (Fixed)
  * Removes promoted posts from LinkedIn feeds
  */
 
@@ -16,17 +16,16 @@ function removeAds() {
     // METHOD 1: Target the exact class LinkedIn uses for promoted posts
     const promotedSpans = document.querySelectorAll('.update-components-actor__sub-description');
     
-    console.log(`[Ad Blocker] Found ${promotedSpans. length} sub-description elements`);
+    console.log(`[Ad Blocker] Found ${promotedSpans.length} sub-description elements`);
     
     promotedSpans.forEach((span) => {
-      const text = span.textContent?. trim().toLowerCase() || '';
+      const text = span.textContent?.trim().toLowerCase() || '';
       
       if (text.includes('promoted')) {
         console.log('[Ad Blocker] 🎯 Found promoted post! ', span);
         
         // Walk up to find the main post container
-        // The structure is: feed-shared-update-v2 is the container we want
-        let postContainer = span.closest('div. feed-shared-update-v2');
+        let postContainer = span.closest('div.feed-shared-update-v2');
         
         // If not found, try alternative container
         if (!postContainer) {
@@ -43,35 +42,35 @@ function removeAds() {
             // Look for the feed update container
             if (parent.classList.contains('feed-shared-update-v2') ||
                 parent.classList.contains('feed-shared-update') ||
-                parent.querySelector('. feed-shared-social-activity')) {
+                parent.querySelector('.feed-shared-social-activity')) {
               postContainer = parent;
               break;
             }
           }
         }
         
-        if (postContainer && ! postContainer.classList.contains('linkedin-ad-blocked')) {
+        if (postContainer && !postContainer.classList.contains('linkedin-ad-blocked')) {
           // Hide with smooth animation
           postContainer.style.transition = 'opacity 0.5s ease-out, max-height 0.5s ease-out';
-          postContainer. style.opacity = '0';
+          postContainer.style.opacity = '0';
           postContainer.style.overflow = 'hidden';
           postContainer.style.maxHeight = postContainer.offsetHeight + 'px';
           
           setTimeout(() => {
-            postContainer. style.maxHeight = '0';
+            postContainer.style.maxHeight = '0';
             postContainer.style.margin = '0';
             postContainer.style.padding = '0';
           }, 100);
           
           setTimeout(() => {
-            postContainer. style.display = 'none';
+            postContainer.style.display = 'none';
           }, 600);
           
           postContainer.classList.add('linkedin-ad-blocked');
           adsRemoved++;
           console.log('[Ad Blocker] ✅ Blocked promoted post:', postContainer);
         } else if (! postContainer) {
-          console.warn('[Ad Blocker] ⚠️ Could not find container.  Trying alternative... ', span);
+          console. warn('[Ad Blocker] ⚠️ Could not find container. Trying alternative...', span);
           
           // Alternative:  Hide the entire fie-impression-container
           const impressionContainer = span.closest('.fie-impression-container');
@@ -129,7 +128,7 @@ function startObserver() {
     
     window.adBlockerTimeout = setTimeout(() => {
       removeAds();
-    }, 500); // Increased delay for stability
+    }, 500);
   });
   
   const feedContainer = 
@@ -208,7 +207,7 @@ new MutationObserver(() => {
   const url = location.href;
   if (url !== lastUrl) {
     lastUrl = url;
-    console.log('[Ad Blocker] 🔄 URL changed, re-scanning...');
+    console. log('[Ad Blocker] 🔄 URL changed, re-scanning...');
     setTimeout(() => removeAds(), 1000);
   }
 }).observe(document, {subtree: true, childList: true});
