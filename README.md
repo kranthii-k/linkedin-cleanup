@@ -21,7 +21,7 @@ A lightweight Chrome extension that automatically removes promoted posts from yo
 - [Contributing](#contributing)
 - [License](#license)
 
-## 🚀 Installation
+## 🚀 Installation in Just 3 Steps 
 
 ### From Source
 
@@ -31,34 +31,15 @@ A lightweight Chrome extension that automatically removes promoted posts from yo
    cd linkedin-cleanup
    ```
 
-2. **Prepare the extension files**
-   
-   Ensure your directory structure looks like this:
-   ```
-   linkedin-cleanup/
-   ├── manifest.json
-   ├── content.js
-   └── icons/
-       ├── icon16.png
-       ├── icon48.png
-       └── icon128.png
-   ```
 
-3. **Create icon files** (if not already present)
-   
-   You'll need three icon sizes. You can create simple icons or use any image editor:
-   - `icon16.png` - 16x16 pixels
-   - `icon48.png` - 48x48 pixels
-   - `icon128.png` - 128x128 pixels
-
-4. **Load the extension in Chrome**
+2. **Load the extension in Chrome**
    - Open Chrome and navigate to `chrome://extensions/`
    - Enable "Developer mode" (toggle in top-right corner)
    - Click "Load unpacked"
    - Select the `linkedin-cleanup` folder
    - The extension should now appear in your extensions list
 
-5. **Start browsing**
+3. **Start browsing**
    - Navigate to [LinkedIn](https://www.linkedin.com)
    - Promoted posts will be automatically removed from your feed
 
