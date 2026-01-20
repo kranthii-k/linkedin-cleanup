@@ -22,7 +22,7 @@ function removeAds() {
       const text = span.textContent?.trim().toLowerCase() || '';
       
       if (text.includes('promoted')) {
-        console.log('[Ad Blocker] 🎯 Found promoted post! ', span);
+        console.log('[Ad Blocker] Found promoted post! ', span);
         
         // Walk up to find the main post container
         let postContainer = span.closest('div.feed-shared-update-v2');
@@ -68,9 +68,9 @@ function removeAds() {
           
           postContainer.classList.add('linkedin-ad-blocked');
           adsRemoved++;
-          console.log('[Ad Blocker] ✅ Blocked promoted post:', postContainer);
+          console.log('[Ad Blocker] Blocked promoted post:', postContainer);
         } else if (! postContainer) {
-          console. warn('[Ad Blocker] ⚠️ Could not find container. Trying alternative...', span);
+          console.warn('[Ad Blocker] Could not find container. Trying alternative...', span);
           
           // Alternative:  Hide the entire fie-impression-container
           const impressionContainer = span.closest('.fie-impression-container');
@@ -78,7 +78,7 @@ function removeAds() {
             impressionContainer.style.display = 'none';
             impressionContainer.classList.add('linkedin-ad-blocked');
             adsRemoved++;
-            console.log('[Ad Blocker] ✅ Blocked via impression container');
+            console.log('[Ad Blocker] Blocked via impression container');
           }
         }
       }
@@ -99,16 +99,16 @@ function removeAds() {
             container.style.display = 'none';
             container.classList. add('linkedin-ad-blocked');
             adsRemoved++;
-            console.log('[Ad Blocker] ✅ Blocked via backup method');
+            console.log('[Ad Blocker] Blocked via backup method');
           }
         }
       });
     }
     
-    console.log(`[Ad Blocker] ✨ Removed ${adsRemoved} ads from this scan`);
+    console.log(`[Ad Blocker]  Removed ${adsRemoved} ads from this scan`);
     
   } catch (error) {
-    console.error('[Ad Blocker] ❌ Error:', error);
+    console.error('[Ad Blocker] Error:', error);
   }
   
   return adsRemoved;
@@ -142,9 +142,9 @@ function startObserver() {
       subtree: true
     });
     
-    console.log('[Ad Blocker] ✅ Observer active on:', feedContainer);
+    console.log('[Ad Blocker] Observer active on:', feedContainer);
   } else {
-    console.error('[Ad Blocker] ❌ Could not find feed container! ');
+    console.error('[Ad Blocker] Could not find feed container! ');
   }
 }
 
@@ -153,7 +153,7 @@ function startObserver() {
 // ============================================
 
 function init() {
-  console.log('[Ad Blocker] 🚀 Initializing.. .');
+  console.log('[Ad Blocker] Initializing.. .');
   
   // Multiple scans to catch delayed content
   setTimeout(() => {
@@ -181,7 +181,7 @@ function init() {
     startObserver();
   }
   
-  console.log('[Ad Blocker] ✅ Initialization complete');
+  console.log('[Ad Blocker] Initialization complete');
 }
 
 // ============================================
@@ -197,7 +197,7 @@ window.removeLinkedInAds = removeAds;
 setInterval(() => {
   const count = removeAds();
   if (count > 0) {
-    console.log(`[Ad Blocker] 🔄 Periodic scan removed ${count} ads`);
+    console.log(`[Ad Blocker] Periodic scan removed ${count} ads`);
   }
 }, 3000);
 
@@ -207,9 +207,9 @@ new MutationObserver(() => {
   const url = location.href;
   if (url !== lastUrl) {
     lastUrl = url;
-    console. log('[Ad Blocker] 🔄 URL changed, re-scanning...');
+    console. log('[Ad Blocker]  URL changed, re-scanning...');
     setTimeout(() => removeAds(), 1000);
   }
 }).observe(document, {subtree: true, childList: true});
 
-console.log('[Ad Blocker] 🎯 Ready to block ads!');
+console.log('[Ad Blocker] Ready to block ads!');
