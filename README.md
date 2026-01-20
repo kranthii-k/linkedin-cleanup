@@ -64,6 +64,10 @@ A lightweight Chrome extension that automatically removes promoted posts from yo
 
 ## 🔍 How It Works
 
+### Architecture Diagram
+
+![LinkedIn Ad Blocker Architecture](architecture/image.png)
+
 ### Detection Methods
 
 The extension uses a multi-layered approach to detect promoted content:
