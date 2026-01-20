@@ -1,5 +1,5 @@
 /**
- * LinkedIn Ad Blocker - Content Script (Enhanced)
+ * LinkedIn Ad Blocker - Content Script (Precise Version)
  * Removes promoted posts from LinkedIn feeds
  */
 
@@ -13,35 +13,37 @@ function removeAds() {
   let adsRemoved = 0;
   
   try {
-    // Method 1: Find by "Promoted" text in ANY span
-    const allSpans = document.querySelectorAll('span');
+    // METHOD 1: Target the exact class LinkedIn uses for promoted posts
+    const promotedSpans = document.querySelectorAll('.update-components-actor__sub-description');
     
-    allSpans.forEach((span) => {
+    console.log(`[Ad Blocker] Found ${promotedSpans. length} sub-description elements`);
+    
+    promotedSpans.forEach((span) => {
       const text = span.textContent?. trim().toLowerCase() || '';
       
-      if (text === 'promoted' || text. includes('promoted')) {
-        console.log('[Ad Blocker] Found "Promoted" span:', span);
+      if (text.includes('promoted')) {
+        console.log('[Ad Blocker] 🎯 Found promoted post! ', span);
         
-        // Find the post container (try multiple levels up)
-        let postContainer = null;
+        // Walk up to find the main post container
+        // The structure is: feed-shared-update-v2 is the container we want
+        let postContainer = span.closest('div. feed-shared-update-v2');
         
-        // Try closest selectors
-        postContainer = span.closest('. feed-shared-update-v2') ||
-                       span.closest('[data-urn]') ||
-                       span.closest('.feed-shared-update') ||
-                       span.closest('div[class*="feed"]');
+        // If not found, try alternative container
+        if (!postContainer) {
+          postContainer = span.closest('div[class*="feed-shared-update"]');
+        }
         
         // If still not found, walk up manually
         if (!postContainer) {
           let parent = span;
-          for (let i = 0; i < 15; i++) {
+          for (let i = 0; i < 20; i++) {
             parent = parent.parentElement;
-            if (!parent) break;
+            if (! parent) break;
             
-            // Check if this looks like a post container
-            if (parent.querySelector('button[aria-label*="React"]') ||
-                parent.querySelector('button[aria-label*="Comment"]') ||
-                parent.classList.toString().includes('update')) {
+            // Look for the feed update container
+            if (parent.classList.contains('feed-shared-update-v2') ||
+                parent.classList.contains('feed-shared-update') ||
+                parent.querySelector('. feed-shared-social-activity')) {
               postContainer = parent;
               break;
             }
@@ -49,16 +51,17 @@ function removeAds() {
         }
         
         if (postContainer && ! postContainer.classList.contains('linkedin-ad-blocked')) {
-          // Hide the ad with animation
-          postContainer.style.transition = 'opacity 0.3s ease-out, height 0.3s ease-out';
-          postContainer.style. opacity = '0';
+          // Hide with smooth animation
+          postContainer.style.transition = 'opacity 0.5s ease-out, max-height 0.5s ease-out';
+          postContainer. style.opacity = '0';
           postContainer.style.overflow = 'hidden';
+          postContainer.style.maxHeight = postContainer.offsetHeight + 'px';
           
           setTimeout(() => {
-            postContainer. style.height = '0';
+            postContainer. style.maxHeight = '0';
             postContainer.style.margin = '0';
             postContainer.style.padding = '0';
-          }, 300);
+          }, 100);
           
           setTimeout(() => {
             postContainer. style.display = 'none';
@@ -66,29 +69,47 @@ function removeAds() {
           
           postContainer.classList.add('linkedin-ad-blocked');
           adsRemoved++;
-          console.log('[Ad Blocker] ✅ Blocked ad:', postContainer);
+          console.log('[Ad Blocker] ✅ Blocked promoted post:', postContainer);
         } else if (! postContainer) {
-          console.warn('[Ad Blocker] ⚠️ Could not find container for:', span);
+          console.warn('[Ad Blocker] ⚠️ Could not find container.  Trying alternative... ', span);
+          
+          // Alternative:  Hide the entire fie-impression-container
+          const impressionContainer = span.closest('.fie-impression-container');
+          if (impressionContainer && !impressionContainer.classList.contains('linkedin-ad-blocked')) {
+            impressionContainer.style.display = 'none';
+            impressionContainer.classList.add('linkedin-ad-blocked');
+            adsRemoved++;
+            console.log('[Ad Blocker] ✅ Blocked via impression container');
+          }
         }
       }
     });
     
-    // Method 2: Find by aria-label
-    const ariaElements = document.querySelectorAll('[aria-label*="romoted"]'); // Partial match
-    ariaElements.forEach((element) => {
-      const container = element.closest('.feed-shared-update-v2') || element.closest('[data-urn]');
-      if (container && !container.classList.contains('linkedin-ad-blocked')) {
-        container.style.display = 'none';
-        container.classList.add('linkedin-ad-blocked');
-        adsRemoved++;
-        console.log('[Ad Blocker] ✅ Blocked ad (aria-label method):', container);
-      }
-    });
+    // METHOD 2: Backup - search all text content
+    if (adsRemoved === 0) {
+      console.log('[Ad Blocker] Method 1 found nothing, trying backup method...');
+      
+      const allSpans = document.querySelectorAll('span');
+      allSpans.forEach((span) => {
+        const text = span.textContent?.trim();
+        if (text === 'Promoted') {
+          const container = span.closest('.feed-shared-update-v2') || 
+                           span.closest('.fie-impression-container');
+          
+          if (container && !container.classList.contains('linkedin-ad-blocked')) {
+            container.style.display = 'none';
+            container.classList. add('linkedin-ad-blocked');
+            adsRemoved++;
+            console.log('[Ad Blocker] ✅ Blocked via backup method');
+          }
+        }
+      });
+    }
     
-    console.log(`[Ad Blocker] Removed ${adsRemoved} ads from this scan`);
+    console.log(`[Ad Blocker] ✨ Removed ${adsRemoved} ads from this scan`);
     
   } catch (error) {
-    console.error('[Ad Blocker] Error:', error);
+    console.error('[Ad Blocker] ❌ Error:', error);
   }
   
   return adsRemoved;
@@ -108,7 +129,7 @@ function startObserver() {
     
     window.adBlockerTimeout = setTimeout(() => {
       removeAds();
-    }, 300);
+    }, 500); // Increased delay for stability
   });
   
   const feedContainer = 
@@ -133,23 +154,30 @@ function startObserver() {
 // ============================================
 
 function init() {
-  console.log('[Ad Blocker] Initializing.. .');
+  console.log('[Ad Blocker] 🚀 Initializing.. .');
   
-  // Initial scan
-  removeAds();
-  
-  // Start observer after a delay to let page load
+  // Multiple scans to catch delayed content
   setTimeout(() => {
-    removeAds(); // Scan again
-  }, 1000);
+    console.log('[Ad Blocker] Initial scan (500ms)');
+    removeAds();
+  }, 500);
   
   setTimeout(() => {
-    removeAds(); // Scan one more time
-  }, 2000);
+    console.log('[Ad Blocker] Secondary scan (1500ms)');
+    removeAds();
+  }, 1500);
+  
+  setTimeout(() => {
+    console.log('[Ad Blocker] Tertiary scan (3000ms)');
+    removeAds();
+  }, 3000);
   
   // Start continuous monitoring
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startObserver);
+    document.addEventListener('DOMContentLoaded', () => {
+      startObserver();
+      removeAds();
+    });
   } else {
     startObserver();
   }
@@ -166,10 +194,23 @@ init();
 // Manual trigger for debugging
 window.removeLinkedInAds = removeAds;
 
-// Force scan every 5 seconds (aggressive mode - for testing)
+// Aggressive mode:  Scan every 3 seconds
 setInterval(() => {
-  const blockedCount = removeAds();
-  if (blockedCount > 0) {
-    console.log(`[Ad Blocker] Periodic scan: removed ${blockedCount} ads`);
+  const count = removeAds();
+  if (count > 0) {
+    console.log(`[Ad Blocker] 🔄 Periodic scan removed ${count} ads`);
   }
-}, 5000);
+}, 3000);
+
+// URL change detection (for SPA navigation)
+let lastUrl = location.href;
+new MutationObserver(() => {
+  const url = location.href;
+  if (url !== lastUrl) {
+    lastUrl = url;
+    console.log('[Ad Blocker] 🔄 URL changed, re-scanning...');
+    setTimeout(() => removeAds(), 1000);
+  }
+}).observe(document, {subtree: true, childList: true});
+
+console.log('[Ad Blocker] 🎯 Ready to block ads!');
