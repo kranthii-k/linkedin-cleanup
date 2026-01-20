@@ -23,7 +23,7 @@ function removeAds() {
   const spanElements = document.querySelectorAll(
     'span.feed-shared-actor__sub-description, ' +  // Main promoted label
     'span[aria-label*="Promoted"], ' +              // Accessibility label
-    'span. feed-shared-text'                         // Alternative text container
+    'span.feed-shared-text'                         // Alternative text container (FIXED:  removed space)
   );
   
   console.log(`[Ad Blocker] Found ${spanElements.length} potential ad indicators`);
@@ -56,13 +56,13 @@ function removeAds() {
         // STEP 5: Hide the post
         // WHY: We use display: none instead of removing the element
         //      because it's safer and reversible
-        postContainer.style.display = 'none';
+        postContainer. style.display = 'none';
         
         // Optional: Add a class for debugging
         postContainer.classList.add('linkedin-ad-blocked');
         
         adsRemoved++;
-        console.log('[Ad Blocker] ✅ Blocked ad:', postContainer);
+        console. log('[Ad Blocker] ✅ Blocked ad:', postContainer);
       } else {
         console.warn('[Ad Blocker] ⚠️ Found "Promoted" but couldn\'t find container:', element);
       }
@@ -79,7 +79,7 @@ function removeAds() {
 /**
  * Monitors the page for dynamically loaded content
  * 
- * WHY: LinkedIn loads posts as you scroll (infinite scroll)
+ * WHY:  LinkedIn loads posts as you scroll (infinite scroll)
  *      We need to catch new ads as they appear
  * 
  * WHAT: Uses MutationObserver API to watch for DOM changes
@@ -94,7 +94,7 @@ function startObserver() {
   //      - Event-driven instead of polling
   const observer = new MutationObserver((mutations) => {
     // DEBOUNCING: Prevent excessive function calls
-    // WHY: When you scroll, LinkedIn adds MANY elements rapidly
+    // WHY:  When you scroll, LinkedIn adds MANY elements rapidly
     //      We don't want to run removeAds() 50 times per second
     
     if (window.adBlockerTimeout) {
@@ -102,7 +102,7 @@ function startObserver() {
     }
     
     // Wait 300ms after the last change before scanning
-    // WHY: LinkedIn might add multiple posts at once
+    // WHY:  LinkedIn might add multiple posts at once
     //      We wait for the "dust to settle" then scan once
     window.adBlockerTimeout = setTimeout(() => {
       removeAds();
@@ -120,7 +120,7 @@ function startObserver() {
     // STEP 3: Start observing
     observer.observe(feedContainer, {
       childList: true,   // Watch for added/removed elements
-      subtree: true      // Watch all descendants, not just direct children
+      subtree:  true      // Watch all descendants, not just direct children
     });
     
     console.log('[Ad Blocker] ✅ Observer active on:', feedContainer);
@@ -166,5 +166,5 @@ function init() {
 init();
 
 // Optional: Expose a manual trigger for debugging
-// Usage: Open console and type:  window.removeLinkedInAds()
+// Usage: Open console and type: window.removeLinkedInAds()
 window.removeLinkedInAds = removeAds;
