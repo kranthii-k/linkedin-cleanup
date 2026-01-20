@@ -207,7 +207,7 @@ new MutationObserver(() => {
   const url = location.href;
   if (url !== lastUrl) {
     lastUrl = url;
-    console. log('[Ad Blocker]  URL changed, re-scanning...');
+    console.log('[Ad Blocker]  URL changed, re-scanning...');
     setTimeout(() => removeAds(), 1000);
   }
 }).observe(document, {subtree: true, childList: true});
