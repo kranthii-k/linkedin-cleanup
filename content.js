@@ -1,8 +1,3 @@
-/**
- * LinkedIn Ad Blocker - Content Script (Fixed)
- * Removes promoted posts from LinkedIn feeds
- */
-
 // ============================================
 // PART 1: Ad Detection & Removal
 // ============================================
