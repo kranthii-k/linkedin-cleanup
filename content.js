@@ -155,7 +155,8 @@ function init() {
   setTimeout(() => {
     console.log('[Ad Blocker] Initial scan (500ms)');
     removeAds();
-  }, 500);
+  }, mutations.length > 5 ? 150 : 50);
+
   
   setTimeout(() => {
     console.log('[Ad Blocker] Secondary scan (1500ms)');
