@@ -134,7 +134,8 @@ function startObserver() {
   if (feedContainer) {
     observer.observe(feedContainer, {
       childList: true,
-      subtree: true
+      subtree: true,
+      characterData: true
     });
     
     console.log('[Ad Blocker] Observer active on:', feedContainer);
