@@ -1,4 +1,4 @@
-# LinkedIn CleanUp (@promoted content blocked)
+# LinkedIn CleanUp 
 
 A lightweight Chrome extension that automatically removes promoted posts from your LinkedIn feed, giving you a cleaner, ad-free browsing experience.
 
